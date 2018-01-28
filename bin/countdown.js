@@ -49,7 +49,7 @@ function getInterval(start, end) {
 function action(end, file) {
   console.log(`Counting down until ${ end }`);
 
-  const endTime = new Date(end).getTime();
+  const endTime = Date.parse(end);
 
   let timeString = '';
 

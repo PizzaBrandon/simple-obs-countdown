@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const package = require('./package.json');
+const package = require('../package.json');
 
 const program = require('commander');
 
+const FRAME = 1 / 60;
 const SECOND = 1;
 const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
@@ -13,10 +14,11 @@ program
   .version(package.version, '-v, --version');
 
 program
-  .command('countdown <end> <file>')
+  .arguments('<end> <file>')
   .alias('cd')
   .description('Write countdown clock until time to the given file')
   .action(action);
+
 
 function getInterval(start, end) {
   let range = end - start;
@@ -43,34 +45,30 @@ function getInterval(start, end) {
   return interval;
 }
 
-function action(end, file) {
-  console.log(end);
-  console.log(file);
 
+function action(end, file) {
   console.log(`Counting down until ${ end }`);
 
   const endTime = new Date(end).getTime();
 
   let timeString = '';
 
-  const writeFile = () => {
-    return Promise.resolve().then(() => {
-      console.log(timeString);
+  const writeFile = (string) => new Promise((res, rej) => {
+    fs.writeFile(file, string, (err) => {
+      if (err) {
+        return rej(err);
+      }
+      return res();
     });
-  };
+  });
 
   const update = () => {
-
     const interval = getInterval(Date.now(), endTime);
 
     if (interval.range <= 0) {
-      timeString = '0:00';
-      return writeFile()
+      return writeFile('0:00')
       .then(() => new Promise((res) => setTimeout(res, 1000)))
-      .then(() => {
-        timeString = '';
-        return writeFile();
-      })
+      .then(() => writeFile(''))
       .then(() => {
         console.log('Countdown complete');
         process.exit(0);
@@ -80,15 +78,13 @@ function action(end, file) {
     const newString = `${ interval.minute }:${ ('0' + interval.second).slice(-2) }`;
     if (newString !== timeString) {
       timeString = newString;
-      console.log(interval);
-      return writeFile().then(() => setTimeout(update, SECOND/60));
+      return writeFile(timeString).then(() => setTimeout(update, FRAME));
     }
 
-    setTimeout(update, SECOND / 60);
+    setTimeout(update, FRAME);
   };
 
   update();
 }
-
 
 program.parse(process.argv);

@@ -1,9 +1,14 @@
 {
-  "name": "simple-countdown",
+  "name": "simple-obs-countdown",
   "version": "1.0.0",
   "description": "Simple countdown timer script for OBS",
-  "main": "countdown.js",
-  "scripts": {},
+  "main": "bin/countdown.js",
+  "bin": {
+    "simple-obs-countdown": "bin/countdown.js"
+  },
+  "scripts": {
+    "patch-release": "npm version patch && npm publish && git push --follow-tags"
+  },
   "keywords": [
     "OBS",
     "stream",

@@ -28,7 +28,7 @@ function getInterval(start, end) {
   };
 
   const millis = Math.floor(range / 1000);
-  if (millis <= 0) {
+  if (millis < 0) {
     range = 0;
   } else {
     range = Math.floor(range / 1000) + 1;
@@ -88,3 +88,8 @@ function action(end, file) {
 }
 
 program.parse(process.argv);
+
+module.exports = {
+  getInterval,
+  action
+};

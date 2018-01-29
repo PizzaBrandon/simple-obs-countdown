@@ -1,6 +1,6 @@
 {
   "name": "simple-obs-countdown",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple countdown timer script for OBS",
   "main": "bin/countdown.js",
   "bin": {
